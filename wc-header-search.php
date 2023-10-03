@@ -28,6 +28,10 @@ if( ! class_exists('WC_Header_Search') ){
             // enqueue_script
             add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_script' ] );
 
+            // get the search result using AJAX technology
+            add_action('wp_ajax_wch_get_products', [ $this, 'get_search_result' ] );
+            add_action('wp_ajax_nopriv_wch_get_products', [ $this, 'get_search_result' ] );
+
         }
 
         /**
@@ -83,6 +87,46 @@ if( ! class_exists('WC_Header_Search') ){
                 'logo_url' => $logo_url,
             ];
             wp_localize_script( 'wc-header-search-script', 'wch', $args );
+        }
+
+
+        /**
+         * get the search results of the product
+         *
+         * @return void
+         */
+        public function get_search_result(){
+            
+            $data = [];
+            
+            if( isset( $_GET['action'] ) && isset( $_GET['action'] ) == 'wch_get_products' ){
+                // $data = 'products';
+
+                $terms = $_GET['terms'];
+                $args = [
+                    'post_type'      => 'product',
+                    'posts_per_page' => -1,
+                    's'              => $terms
+                ];
+
+                $qry = new WP_Query( $args );
+
+                if( $qry->have_posts() ){
+                    while( $qry->have_posts() ): $qry->the_post();
+                        $data[] = [
+                            'title' => get_the_title(),
+                            'content'=> get_the_content(),
+                        ];
+                    endwhile;
+                }
+                wp_reset_postdata();
+
+                
+            }else{
+                $data[] = 'You are not allowed to...';
+            }
+            
+            wp_send_json_success( $data );
         }
 
         /**

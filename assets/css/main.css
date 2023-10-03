@@ -52,7 +52,11 @@
     box-shadow: none;
 }
 
-.wch-header .search-result {
+.wch-header .search-result:empty {
+    display: none;
+}
+
+.wch-header .search-result:not(:empty) {
     position: absolute;
     top: 100%;
     left: 0;

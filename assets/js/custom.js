@@ -3,6 +3,7 @@
     class WCHeaderSearch {
         init() {
             this.createHeaderElement();
+            this.getSearchResult();
         }
         createHeaderElement() {
             var headerElement = `
@@ -18,14 +19,39 @@
                         <form action="#" class="wch-search-form">
                             <input type="text" id="wch-search-field">
                         </form>
-                        <ul class="search-result">
-                            <li><a href="#">Search Result</a></li>
-                        </ul>
+                        <ul class="search-result"></ul>
                     </div>
                 </div>
             </div>
             `;
             $('body').prepend(headerElement);
+        }
+
+        getSearchResult() {
+            $('#wch-search-field').on('keyup', function (e) {
+                e.preventDefault();
+                // $(this)
+                //     .parent('.wch-search-form')
+                //     .siblings('.search-result')
+                //     .append('hello world');
+                $.ajax({
+                    type: 'GET',
+                    url: wch.ajaxurl,
+                    data: {
+                        action: 'wch_get_products',
+                        terms: $(this).val().trim().toLowerCase()
+                    },
+                    success: function (response) {
+                        console.log(response.data);
+                    },
+                    beforeSend: function () {
+                        $(this)
+                            .parent('.wch-search-form')
+                            .siblings('.search-result')
+                            .append('loading');
+                    }
+                });
+            });
         }
     }
 
