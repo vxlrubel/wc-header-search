@@ -19,7 +19,56 @@ if( ! class_exists('WC_Header_Search') ){
         private static $instance;
 
         public function __construct(){
+            // settings link
+            add_filter( 'plugin_action_links', [ $this, 'create_settings_link'], 10, 2 );
+            
+            // documentation
+            add_filter( 'plugin_row_meta', [ $this, 'documentation' ], 10, 2 );
 
+            // enqueue_script
+            add_action( 'wp_enqueue_script', [ $this, 'enqueue_script' ] );
+
+        }
+
+        /**
+         * create setting link 
+         *
+         * @param [type] $links
+         * @param [type] $file
+         * @return $links
+         */
+        public function create_settings_link( $links, $file ){
+            if( plugin_basename( __FILE__ ) === $file ){
+                $url = '#';
+                $settings = "<a href=\"{$url}\">Settings</a>";
+                array_unshift( $links, $settings );
+            }
+            return $links;
+        }
+
+        /**
+         * create documetation page links for WC_Header_Search
+         *
+         * @param [type] $meta
+         * @param [type] $file
+         * @return $meta
+         */
+        public function documentation( $meta, $file ){
+            if( plugin_basename( __FILE__) === $file ){
+                $url = '#';
+                $meta[] = "<a href=\"{$url}\">Documentation</a>";
+            }
+            return $meta;
+        }
+
+        /**
+         * enqueue plugin scripts
+         *
+         * @return void
+         */
+        public function enqueue_script(){
+            wp_enqueue_style( 'wc-header-search-style', plugins_url( 'assets/css/main.css', __FILE__ ) );
+            wp_enqueue_script( 'wc-header-search-script', plugins_url( 'assets/js/custom.js', __FILE__ ), ['jquery'], '1.0', true );
         }
 
         /**
