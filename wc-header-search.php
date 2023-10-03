@@ -105,6 +105,8 @@ if( ! class_exists('WC_Header_Search') ){
 
                 if( $_GET['terms'] !== '' ){
                     $terms = $_GET['terms'];
+                }else{
+                    exit();
                 }
                 
                 $args = [
