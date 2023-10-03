@@ -14,12 +14,12 @@
                     </div>
                     <div class="search-parent">
                         <div class="logo">
-                            <a href="#"><img src="${wch.logo_url}" alt="logo image"></a>
+                            <a href="${wch.site_url}"><img src="${wch.logo_url}" alt="logo image"></a>
                         </div>
                         <form action="#" class="wch-search-form">
                             <input type="text" id="wch-search-field">
                         </form>
-                        <ul class="search-result"></ul>
+                        <ul class="search-result" id="show-search-result"></ul>
                     </div>
                 </div>
             </div>
@@ -30,25 +30,52 @@
         getSearchResult() {
             $('#wch-search-field').on('keyup', function (e) {
                 e.preventDefault();
-                // $(this)
-                //     .parent('.wch-search-form')
-                //     .siblings('.search-result')
-                //     .append('hello world');
                 $.ajax({
                     type: 'GET',
                     url: wch.ajaxurl,
                     data: {
                         action: 'wch_get_products',
-                        terms: $(this).val().trim().toLowerCase()
+                        terms: $('#wch-search-field').val().trim().toLowerCase()
                     },
                     success: function (response) {
-                        console.log(response.data);
+                        var data = response.data;
+                        if (data && data.length) {
+
+                            // clear the search result
+                            $('#show-search-result').empty();
+
+                            // count the total array of element
+                            let count = data.length;
+
+                            for (let i = 0; i < count; i++) {
+
+                                let element = `
+                                <li class="wc-product-list">
+                                    <div class="thumb">
+                                        <img src="${data[i].thumb}">
+                                    </div>
+                                    <div class="desc">
+                                        <h2><a href="${data[i].links}">${data[i].title}</a></h2>
+                                        <p>${data[i].content}</p>
+                                    </div>
+                                </li>
+                                
+                                `;
+
+                                // append the element of the search result
+                                if (data[i].not_found) {
+                                    $('#show-search-result').append('No Product Found');
+                                } else {
+                                    $('#show-search-result').append(element);
+                                }
+
+                                console.log(data);
+
+                            }
+                        }
                     },
                     beforeSend: function () {
-                        $(this)
-                            .parent('.wch-search-form')
-                            .siblings('.search-result')
-                            .append('loading');
+                        $('#show-search-result').text('loading...')
                     }
                 });
             });

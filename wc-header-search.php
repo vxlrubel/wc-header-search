@@ -85,6 +85,7 @@ if( ! class_exists('WC_Header_Search') ){
             $args = [
                 'ajaxurl'  => admin_url( 'admin-ajax.php' ),
                 'logo_url' => $logo_url,
+                'site_url' => esc_url( home_url('/') )
             ];
             wp_localize_script( 'wc-header-search-script', 'wch', $args );
         }
@@ -98,11 +99,14 @@ if( ! class_exists('WC_Header_Search') ){
         public function get_search_result(){
             
             $data = [];
-            
+
             if( isset( $_GET['action'] ) && isset( $_GET['action'] ) == 'wch_get_products' ){
                 // $data = 'products';
 
-                $terms = $_GET['terms'];
+                if( $_GET['terms'] !== '' ){
+                    $terms = $_GET['terms'];
+                }
+                
                 $args = [
                     'post_type'      => 'product',
                     'posts_per_page' => -1,
@@ -114,10 +118,16 @@ if( ! class_exists('WC_Header_Search') ){
                 if( $qry->have_posts() ){
                     while( $qry->have_posts() ): $qry->the_post();
                         $data[] = [
-                            'title' => get_the_title(),
-                            'content'=> get_the_content(),
+                            'title'   => get_the_title(),
+                            'content' => wp_trim_words( get_the_content( get_the_ID() ), 15, '' ),
+                            'links'   => esc_url( get_permalink() ),
+                            'thumb'   => get_the_post_thumbnail_url(get_the_ID(), 'thumbnail'),
                         ];
                     endwhile;
+                }else{
+                    $data[]= [
+                        'not_found' => 'No Product Found'
+                    ];
                 }
                 wp_reset_postdata();
 
