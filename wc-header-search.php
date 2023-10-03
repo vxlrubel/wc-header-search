@@ -26,7 +26,7 @@ if( ! class_exists('WC_Header_Search') ){
             add_filter( 'plugin_row_meta', [ $this, 'documentation' ], 10, 2 );
 
             // enqueue_script
-            add_action( 'wp_enqueue_script', [ $this, 'enqueue_script' ] );
+            add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_script' ] );
 
         }
 
@@ -67,8 +67,22 @@ if( ! class_exists('WC_Header_Search') ){
          * @return void
          */
         public function enqueue_script(){
+            
+            // nequeue style
             wp_enqueue_style( 'wc-header-search-style', plugins_url( 'assets/css/main.css', __FILE__ ) );
+
+            // enqueue script
             wp_enqueue_script( 'wc-header-search-script', plugins_url( 'assets/js/custom.js', __FILE__ ), ['jquery'], '1.0', true );
+
+            // transfer data into Javascript file
+            $logo_id = get_theme_mod('custom_logo');
+            $logo_url = esc_url( wp_get_attachment_url( $logo_id ) );
+            
+            $args = [
+                'ajaxurl'  => admin_url( 'admin-ajax.php' ),
+                'logo_url' => $logo_url,
+            ];
+            wp_localize_script( 'wc-header-search-script', 'wch', $args );
         }
 
         /**
