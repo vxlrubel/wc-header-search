@@ -8,10 +8,10 @@
         createHeaderElement() {
             var headerElement = `
             <div class="wch-header">
+                <div class="contact-info" style="background-color: ${wch.whatsapp_bg}; color: ${wch.whatsapp_color}">
+                    <span>${wch.whatsapp}</span>
+                </div>
                 <div class="container">
-                    <div class="contact-info">
-                        <span>01714240934</span>
-                    </div>
                     <div class="search-parent">
                         <div class="logo">
                             <a href="${wch.site_url}"><img src="${wch.logo_url}" alt="logo image"></a>
@@ -28,53 +28,57 @@
         }
 
         getSearchResult() {
-            $('#wch-search-field').on('keyup', function (e) {
-                e.preventDefault();
-                $.ajax({
-                    type: 'GET',
-                    url: wch.ajaxurl,
-                    data: {
-                        action: 'wch_get_products',
-                        terms: $('#wch-search-field').val().trim().toLowerCase()
-                    },
-                    success: function (response) {
-                        var data = response.data;
-                        if (data && data.length) {
+            // $('#wch-search-field').on('keyup', function (e) {
+            //     e.preventDefault();
+            //     this.sendAjaxRequest();
+            // });
+            $('#wch-search-field').on('keyup', this.sendAjaxRequest);
+            $('#wch-search-field').on('change', this.sendAjaxRequest);
+            $('.wch-search-form').on('submit', this.sendAjaxRequest);
+        }
+        sendAjaxRequest() {
+            $.ajax({
+                type: 'GET',
+                url: wch.ajaxurl,
+                data: {
+                    action: 'wch_get_products',
+                    terms: $('#wch-search-field').val().trim().toLowerCase()
+                },
+                success: function (response) {
+                    var data = response.data;
+                    if (data && data.length) {
 
-                            // clear the search result
-                            $('#show-search-result').empty();
+                        // clear the search result
+                        $('#show-search-result').empty();
 
-                            // count the total array of element
-                            let count = data.length;
+                        // count the total array of element
+                        let count = data.length;
 
-                            for (let i = 0; i < count; i++) {
+                        for (let i = 0; i < count; i++) {
 
-                                let element = `
-                                <li class="wc-product-list">
-                                    <div class="thumb">
-                                        <img src="${data[i].thumb}">
-                                    </div>
-                                    <div class="desc">
-                                        <h2><a href="${data[i].links}">${data[i].title}</a></h2>
-                                        <p>${data[i].content}</p>
-                                    </div>
-                                </li>
-                                
-                                `;
+                            let element = `
+                            <li class="wc-product-list">
+                                <div class="thumb">
+                                    <img src="${data[i].thumb}">
+                                </div>
+                                <div class="desc">
+                                    <h2><a href="${data[i].links}">${data[i].title}</a></h2>
+                                    <p>${data[i].content}</p>
+                                </div>
+                            </li>
+                            
+                            `;
 
-                                // append the element of the search result
-                                if (data[i].not_found) {
-                                    $('#show-search-result').append('No Product Found');
-                                } else {
-                                    $('#show-search-result').append(element);
-                                }
-
-                                console.log(data);
-
+                            // append the element of the search result
+                            if (data[i].not_found) {
+                                $('#show-search-result').append('No Product Found');
+                            } else {
+                                $('#show-search-result').append(element);
                             }
+
                         }
                     }
-                });
+                }
             });
         }
     }

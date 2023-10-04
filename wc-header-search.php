@@ -32,6 +32,13 @@ if( ! class_exists('WC_Header_Search') ){
             add_action('wp_ajax_wch_get_products', [ $this, 'get_search_result' ] );
             add_action('wp_ajax_nopriv_wch_get_products', [ $this, 'get_search_result' ] );
 
+            // create admin page
+            add_action( 'admin_menu', [ $this, 'wc_admin_menu' ] );
+
+            // register settings
+            add_action('admin_init', [ $this, 'wc_header_search_settings'] );
+
+
         }
 
         /**
@@ -43,7 +50,7 @@ if( ! class_exists('WC_Header_Search') ){
          */
         public function create_settings_link( $links, $file ){
             if( plugin_basename( __FILE__ ) === $file ){
-                $url = '#';
+                $url = esc_url( admin_url('admin.php'). '?page=wc-header-search' );
                 $settings = "<a href=\"{$url}\">Settings</a>";
                 array_unshift( $links, $settings );
             }
@@ -59,8 +66,8 @@ if( ! class_exists('WC_Header_Search') ){
          */
         public function documentation( $meta, $file ){
             if( plugin_basename( __FILE__) === $file ){
-                $url = '#';
-                $meta[] = "<a href=\"{$url}\">Documentation</a>";
+                $url = 'https://github.com/vxlrubel/wc-header-search';
+                $meta[] = "<a href=\"{$url}\" target=\"_blank\">Documentation</a>";
             }
             return $meta;
         }
@@ -71,23 +78,30 @@ if( ! class_exists('WC_Header_Search') ){
          * @return void
          */
         public function enqueue_script(){
-            
-            // nequeue style
-            wp_enqueue_style( 'wc-header-search-style', plugins_url( 'assets/css/main.css', __FILE__ ) );
+            if( get_wc_header_search_enable() ){
+                // nequeue style
+                wp_enqueue_style( 'wc-header-search-style', plugins_url( 'assets/css/main.css', __FILE__ ) );
 
-            // enqueue script
-            wp_enqueue_script( 'wc-header-search-script', plugins_url( 'assets/js/custom.js', __FILE__ ), ['jquery'], '1.0', true );
+                // enqueue script
+                wp_enqueue_script( 'wc-header-search-script', plugins_url( 'assets/js/custom.js', __FILE__ ), ['jquery'], '1.0', true );
 
-            // transfer data into Javascript file
-            $logo_id = get_theme_mod('custom_logo');
-            $logo_url = esc_url( wp_get_attachment_url( $logo_id ) );
-            
-            $args = [
-                'ajaxurl'  => admin_url( 'admin-ajax.php' ),
-                'logo_url' => $logo_url,
-                'site_url' => esc_url( home_url('/') )
-            ];
-            wp_localize_script( 'wc-header-search-script', 'wch', $args );
+                // transfer data into Javascript file
+                $logo_id     = get_theme_mod('custom_logo');
+                $logo_url    = esc_url( wp_get_attachment_url( $logo_id ) );
+                $whats_app   = get_option('wc_whatsapp_number');
+                $whats_bg    = get_option('wc_whatsapp_background') ? get_option('wc_whatsapp_background') : '#ffffff';
+                $whats_color = get_option('wc_whatsapp_color') ? get_option('wc_whatsapp_color') : '#444444';
+                
+                $args = [
+                    'ajaxurl'        => admin_url( 'admin-ajax.php' ),
+                    'logo_url'       => $logo_url,
+                    'site_url'       => esc_url( home_url('/') ),
+                    'whatsapp'       => $whats_app,
+                    'whatsapp_bg'    => $whats_bg,
+                    'whatsapp_color' => $whats_color
+                ];
+                wp_localize_script( 'wc-header-search-script', 'wch', $args );
+            }
         }
 
 
@@ -142,6 +156,44 @@ if( ! class_exists('WC_Header_Search') ){
         }
 
         /**
+         * create a admin menu
+         *
+         * @return void
+         */
+        public function wc_admin_menu(){
+            add_submenu_page(
+                'woocommerce',                  // parent slug
+                'WC Header Search',             // page title
+                'WC Header Search',             // menu title
+                'edit_posts',                   //capability
+                'wc-header-search',             // menu slug
+                [ $this, '_cb_header_search'],  // callback
+                110                             // position
+            );
+        }
+
+        /**
+         * create admin page
+         *
+         * @return void
+         */
+        public function _cb_header_search(){
+            require_once dirname(__FILE__) . '/inc/admin-menu.php';
+        }
+
+        /**
+         * register header search settings
+         *
+         * @return void
+         */
+        public function wc_header_search_settings(){
+            register_setting('wc_header_search', 'wc_header_search_enable', 'intval');
+            register_setting('wc_header_search', 'wc_whatsapp_number');
+            register_setting('wc_header_search', 'wc_whatsapp_color');
+            register_setting('wc_header_search', 'wc_whatsapp_background');
+        }
+
+        /**
          * create instance of WC_Header_Search
          *
          * @return void
@@ -162,3 +214,8 @@ if( ! function_exists('wc_header_search')){
     }
 }
 wc_header_search();
+
+// Retrieve the checkbox value in the frontend
+function get_wc_header_search_enable() {
+    return get_option('wc_header_search_enable');
+}
