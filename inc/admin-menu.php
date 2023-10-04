@@ -1,19 +1,18 @@
 <?php
 
 // directly access denied
-defined( 'ABSPATH' ) || exit;
-?>
+defined( 'ABSPATH' ) || exit; ?>
 <div class="wrap">
     <h2>WC Header Search Settings</h2>
     <div class="wfd-wrap">
         <div class="side-left">
             <form method="post" action="options.php">
                 <?php
-                // show save changes message
-                settings_errors();
+                    // show save changes message
+                    settings_errors();
 
-                settings_fields('wc_header_search');
-                do_settings_sections('wc-header-search');
+                    settings_fields('wc_header_search');
+                    do_settings_sections('wc-header-search');
                 ?>
                 <table class="form-table">
                     <tr valign="top">
@@ -105,7 +104,4 @@ defined( 'ABSPATH' ) || exit;
             </div>
         </div>
     </div>
-    
-    
-
 </div>

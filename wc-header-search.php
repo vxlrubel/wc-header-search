@@ -41,7 +41,6 @@ if( ! class_exists('WC_Header_Search') ){
             // create admin notice if WooCommerce is not active
             add_action( 'admin_notices', [ $this, 'admin_notice_if_woocommerce_is_not_active' ] );
 
-
         }
 
         /**
@@ -83,8 +82,8 @@ if( ! class_exists('WC_Header_Search') ){
          * @return void
          */
         public function enqueue_script(){
-            if( get_wc_header_search_enable() ){
 
+            if( $this->is_enable_header_search() ){
                 // nequeue style
                 wp_enqueue_style( 'wc-header-search-style', plugins_url( 'assets/css/main.css', __FILE__ ) );
 
@@ -111,7 +110,7 @@ if( ! class_exists('WC_Header_Search') ){
                     'whatsapp_bg'    => $whats_bg,
                     'whatsapp_color' => $whats_color
                 ];
-                
+
                 wp_localize_script( 'wc-header-search-script', 'wch', $args );
             }
         }
@@ -223,6 +222,15 @@ if( ! class_exists('WC_Header_Search') ){
         }
 
         /**
+         * enable header search options
+         *
+         * @return void
+         */
+        private function is_enable_header_search() {
+            return get_option('wc_header_search_enable');
+        }
+
+        /**
          * create instance of WC_Header_Search
          *
          * @return void
@@ -243,8 +251,3 @@ if( ! function_exists('wc_header_search')){
     }
 }
 wc_header_search();
-
-// Retrieve the checkbox value in the frontend
-function get_wc_header_search_enable() {
-    return get_option('wc_header_search_enable');
-}
