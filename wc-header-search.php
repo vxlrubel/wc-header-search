@@ -38,6 +38,9 @@ if( ! class_exists('WC_Header_Search') ){
             // register settings
             add_action('admin_init', [ $this, 'wc_header_search_settings'] );
 
+            // create admin notice if WooCommerce is not active
+            add_action( 'admin_notices', [ $this, 'admin_notice_if_woocommerce_is_not_active' ] );
+
 
         }
 
@@ -193,6 +196,22 @@ if( ! class_exists('WC_Header_Search') ){
             register_setting('wc_header_search', 'wc_whatsapp_number');
             register_setting('wc_header_search', 'wc_whatsapp_color');
             register_setting('wc_header_search', 'wc_whatsapp_background');
+        }
+
+        /**
+         * admin notice if woocommerce is not active
+         *
+         * @return void
+         */
+        public function admin_notice_if_woocommerce_is_not_active(){
+            if( ! class_exists('WooCommerce') ){
+                $notice = '
+                    <div class="notice notice-error is-dismissible">
+                        <p>WC Header Search requires WooCommerce to be installed and activated. Please activate WooCommerce to use this plugin.</p>
+                    </div>
+                ';
+                echo $notice;
+            }
         }
 
         /**
