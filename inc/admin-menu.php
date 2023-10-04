@@ -5,8 +5,6 @@ defined( 'ABSPATH' ) || exit;
 ?>
 <div class="wrap">
     <h2>WC Header Search Settings</h2>
-
-
     <div class="wfd-wrap">
         <div class="side-left">
             <form method="post" action="options.php">
