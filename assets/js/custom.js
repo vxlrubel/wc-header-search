@@ -73,9 +73,6 @@
 
                             }
                         }
-                    },
-                    beforeSend: function () {
-                        $('#show-search-result').text('loading...')
                     }
                 });
             });
