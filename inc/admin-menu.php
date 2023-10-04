@@ -28,10 +28,17 @@ defined( 'ABSPATH' ) || exit;
                         </td>
                     </tr>
                     <tr valign="top">
+                        <th scope="row">Logo Url:</th>
+                        <td>
+                            <input type="text" name="wc_header_search_logo_url" id="wc_header_search_logo_url" value="<?php echo get_option('wc_header_search_logo_url'); ?>" class="regular-text" />
+                            <p class="description">Paste here the logo image url.</p>
+                        </td>
+                    </tr>
+                    <tr valign="top">
                         <th scope="row">Whats App:</th>
                         <td>
 
-                            <input type="text" name="wc_whatsapp_number" id="wc_whatsapp_number" value="<?php echo esc_attr(get_option('wc_whatsapp_number')); ?>" />
+                            <input type="text" name="wc_whatsapp_number" id="wc_whatsapp_number" value="<?php echo esc_attr(get_option('wc_whatsapp_number')); ?>" class="regular-text" />
 
                             <p class="description">Enter Your WhatsApp Number</p>
                         </td>

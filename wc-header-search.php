@@ -92,7 +92,11 @@ if( ! class_exists('WC_Header_Search') ){
 
                 // transfer data into Javascript file
                 $logo_id     = get_theme_mod('custom_logo');
-                $logo_url    = esc_url( wp_get_attachment_url( $logo_id ) );
+                if( $logo_id ) {
+                    $logo_url = esc_url( wp_get_attachment_url( $logo_id ) );
+                }else{
+                    $logo_url = get_option('wc_header_search_logo_url');
+                }
                 $whats_app   = get_option('wc_whatsapp_number');
                 $whats_bg    = get_option('wc_whatsapp_background') ? get_option('wc_whatsapp_background') : '#ffffff';
                 $whats_color = get_option('wc_whatsapp_color') ? get_option('wc_whatsapp_color') : '#444444';
@@ -192,6 +196,7 @@ if( ! class_exists('WC_Header_Search') ){
          * @return void
          */
         public function wc_header_search_settings(){
+            register_setting('wc_header_search', 'wc_header_search_logo_url');
             register_setting('wc_header_search', 'wc_header_search_enable', 'intval');
             register_setting('wc_header_search', 'wc_whatsapp_number');
             register_setting('wc_header_search', 'wc_whatsapp_color');
