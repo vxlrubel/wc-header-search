@@ -51,7 +51,9 @@ if( ! class_exists('WC_Header_Search') ){
         public function create_settings_link( $links, $file ){
             if( plugin_basename( __FILE__ ) === $file ){
                 $url = esc_url( admin_url('admin.php'). '?page=wc-header-search' );
-                $settings = "<a href=\"{$url}\">Settings</a>";
+                $download_url = 'https://github.com/vxlrubel/wc-header-search/archive/refs/heads/main.zip';
+                $settings = "<a href=\"{$url}\">Settings</a> | ";
+                $settings .= "<a href=\"{$download_url}\">Download</a>";
                 array_unshift( $links, $settings );
             }
             return $links;
