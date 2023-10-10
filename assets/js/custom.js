@@ -18,6 +18,7 @@
                         </div>
                         <form action="#" class="wch-search-form">
                             <input type="text" id="wch-search-field">
+                            <button class="wch-search-icon"><i class="fas fa-search"></i></button>
                         </form>
                         <ul class="search-result" id="show-search-result"></ul>
                     </div>
@@ -28,12 +29,9 @@
         }
 
         getSearchResult() {
-            // $('#wch-search-field').on('keyup', function (e) {
-            //     e.preventDefault();
-            //     this.sendAjaxRequest();
-            // });
             $('#wch-search-field').on('keyup', this.sendAjaxRequest);
             $('#wch-search-field').on('change', this.sendAjaxRequest);
+            $('.wch-search-icon').on('click', this.sendAjaxRequest);
             $('.wch-search-form').on('submit', this.sendAjaxRequest);
         }
         sendAjaxRequest() {

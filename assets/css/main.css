@@ -50,6 +50,7 @@
 }
 
 .wch-header .wch-search-form {
+    display: flex !important;
     width: calc(100% - 160px);
 }
 
